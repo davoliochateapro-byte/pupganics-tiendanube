@@ -88,7 +88,7 @@ def build(src):
                      f'box-shadow:inset 0 0 0 3px #fff,0 0 0 2px {BLUE};"></div>')
         else:
             radio = '<div style="width:18px;height:18px;border-radius:50%;border:2px solid #c7cfdb;"></div>'
-        badge_html = (f'<span style="position:absolute;top:-11px;right:14px;background:{NAVY};color:#fff;'
+        badge_html = (f'<span style="position:absolute;top:-11px;right:14px;background:{BLUE};color:#fff;'
                       f'font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;">{badge}</span>' if badge else '')
         bonus_html = ''
         bg = BLUE if active else '#c7cfdb'
