@@ -76,6 +76,48 @@ def build(src):
         add(f'<p style="margin:0 0 10px;font-size:15px;line-height:1.45;color:#1c2430;padding-left:24px;text-indent:-24px;">'
             f'<span style="color:{BLUE};font-weight:800;display:inline-block;width:24px;text-indent:0;">✔</span>{b}</p>')
 
+    # Ofertas en cantidad (réplica visual del selector de Shopify/Kaching).
+    # Tiendanube borra <script> de la descripción, así que esto NO es clickeable:
+    # la compra real se hace con el desplegable "Cantidad" nativo, arriba del todo.
+    add(f'<p style="text-align:center;font-size:11px;color:{MUTED};margin:14px 0 12px;">👆 Elegí tu pack en el menú "Cantidad" de arriba</p>')
+
+    def offer_card(active, badge, title, units, price, compare, sub, bonuses):
+        border = f"border:2px solid {BLUE};" if active else "border:1px solid #e1e6ee;"
+        if active:
+            radio = (f'<div style="width:18px;height:18px;border-radius:50%;background:{BLUE};'
+                     f'box-shadow:inset 0 0 0 3px #fff,0 0 0 2px {BLUE};"></div>')
+        else:
+            radio = '<div style="width:18px;height:18px;border-radius:50%;border:2px solid #c7cfdb;"></div>'
+        badge_html = (f'<span style="position:absolute;top:-11px;right:14px;background:{NAVY};color:#fff;'
+                      f'font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;">{badge}</span>' if badge else '')
+        bonus_html = ''
+        bg = BLUE if active else '#c7cfdb'
+        for i, b in enumerate(bonuses):
+            radius = 'border-radius:0 0 9px 9px;' if i == len(bonuses) - 1 else ''
+            bonus_html += (f'<div style="background:{bg};color:#fff;font-size:12px;font-weight:700;'
+                           f'padding:8px 16px;{radius}">+ {b}</div>')
+        return (f'<div style="position:relative;{border}border-radius:10px;margin:0 0 14px;">'
+                '<table role="presentation" style="width:100%;border-collapse:collapse;"><tr>'
+                f'<td style="width:34px;padding:14px 0 14px 16px;vertical-align:middle;">{radio}</td>'
+                '<td style="padding:14px 8px;vertical-align:middle;">'
+                f'<span style="font-size:15px;font-weight:800;color:{NAVY};">{title}</span> '
+                f'<span style="display:inline-block;background:{CARD};color:{BLUE};font-size:11px;font-weight:700;'
+                f'padding:2px 8px;border-radius:10px;margin-left:2px;white-space:nowrap;">{units}</span>'
+                f'<div style="font-size:11px;color:{MUTED};margin-top:3px;">{sub}</div></td>'
+                '<td style="padding:14px 16px 14px 0;text-align:right;vertical-align:middle;white-space:nowrap;">'
+                f'<div style="font-size:15px;font-weight:800;color:{NAVY};">{price}</div>'
+                f'<div style="font-size:12px;color:{MUTED};text-decoration:line-through;">{compare}</div></td>'
+                f'</tr></table>{badge_html}{bonus_html}</div>')
+
+    add('<div style="border-top:1px solid #e7ecf3;padding-top:16px;">')
+    add(f'<p style="text-align:center;font-weight:800;font-size:13px;color:{NAVY};letter-spacing:0.3px;margin:0 0 14px;">Ofertas en cantidad</p>')
+    add(offer_card(False, None, "Lleva 1", "30 gomitas", "$39.900,00", "$59.900,00", "Apoyo para 30 Días", []))
+    add(offer_card(True, "Más Popular", "Oferta x2", "60 gomitas", "$59.990,00", "$119.800,00", "Apoyo para 2 meses",
+                    ["E-Book sobre deficiencias nutricionales", "Envío GRATIS"]))
+    add(offer_card(False, "Mejor Oferta", "Pack 4 Meses", "120 gomitas", "$79.900,00", "$239.600,00", "Apoyo para 4 Meses",
+                    ["E-Book sobre deficiencias nutricionales", "Envío GRATIS"]))
+    add('</div>')
+
     # Guía de porción + por qué les encanta (2 columnas, también en celular)
     add('<table role="presentation" style="width:100%;border-collapse:collapse;margin:16px 0 0;border-top:1px solid #e7ecf3;"><tr>')
     add(f'<td style="width:50%;vertical-align:top;text-align:center;padding:14px 9px 0 0;">'
