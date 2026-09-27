@@ -84,5 +84,34 @@
         if (addBtn) addBtn.click();
       });
     }
+
+    // Oculta el bloque nativo redundante (precio/cuotas/descuento, el selector
+    // "Cantidad" + paso a paso + botón "Agregar al carrito", el simulador de
+    // envío y los sellos de confianza) ya que las tarjetas + el CTA propio los
+    // reemplazan. Se ocultan con display:none, nunca se quitan del DOM: el
+    // <select> y el botón real siguen ahí para que este mismo script los seguir
+    // usando (un elemento oculto responde igual a .value, "change" y .click()).
+    function hide(el) {
+      if (el) el.style.display = 'none';
+    }
+
+    hide(document.querySelector('.js-price-container'));
+    hide(document.querySelector('.js-product-payments-container'));
+
+    var qtyRow = select.closest('.js-product-variants') || select.closest('.form-row');
+    hide(qtyRow);
+
+    var addToCartBtnEl = document.querySelector('.js-addtocart');
+    hide(addToCartBtnEl ? addToCartBtnEl.closest('.form-row') : null);
+
+    hide(document.getElementById('product-shipping-container'));
+
+    var formRows = document.querySelectorAll('#product_form > div');
+    for (var m = 0; m < formRows.length; m++) {
+      var t = formRows[m].textContent;
+      if (/compra protegida/i.test(t) || /cambios y devoluciones/i.test(t)) {
+        hide(formRows[m]);
+      }
+    }
   });
 })();
