@@ -162,6 +162,7 @@
       }
 
       hide(container.querySelector('a[data-network="twitter"]'));
+      hide(container.querySelector('a[data-network="pinterest"]'));
 
       var pinIt = container.querySelector('.pin-it-button');
       hide(pinIt ? pinIt.closest('.social-share-button') || pinIt : null);
