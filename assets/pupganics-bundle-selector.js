@@ -99,7 +99,7 @@
     var HIDE_CLASS = 'pg-native-hide';
     var style = document.createElement('style');
     style.textContent =
-      '.js-price-container, .js-product-payments-container, #product-shipping-container, .' +
+      '.js-price-container, .js-product-payments-container, #product-shipping-container, .js-offer-label, .' +
       HIDE_CLASS +
       ' { display: none !important; }';
     document.head.appendChild(style);
