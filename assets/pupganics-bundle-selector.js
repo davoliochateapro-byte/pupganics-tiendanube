@@ -133,5 +133,51 @@
       });
       observer.observe(form, { childList: true, subtree: true });
     }
+
+    // Convierte los botones nativos de "compartir este producto" en links
+    // directos a WhatsApp/Facebook/Instagram de Pupganics. Twitter y
+    // Pinterest quedan ocultos. El ícono de Instagram no existe de forma
+    // nativa en esta fila: se clona el de Facebook (mismo estilo circular)
+    // y se le cambia el símbolo SVG por "#instagram", que ya está definido
+    // en el sprite del tema.
+    var XLINK_NS = 'http://www.w3.org/1999/xlink';
+
+    function setupSocialLinks() {
+      var container = document.querySelector('.social-share');
+      if (!container) return;
+
+      var waLinks = container.querySelectorAll('a[data-network="whatsapp"]');
+      for (var i = 0; i < waLinks.length; i++) {
+        waLinks[i].href = 'https://wa.me/5493804851800';
+        waLinks[i].title = 'Escribinos por WhatsApp';
+        waLinks[i].setAttribute('aria-label', 'Escribinos por WhatsApp');
+        waLinks[i].classList.remove('d-md-none');
+      }
+
+      var fb = container.querySelector('a[data-network="facebook"]');
+      if (fb) {
+        fb.href = 'https://www.facebook.com/profile.php?id=61594149814469';
+        fb.title = 'Seguinos en Facebook';
+        fb.setAttribute('aria-label', 'Seguinos en Facebook');
+      }
+
+      hide(container.querySelector('a[data-network="twitter"]'));
+
+      var pinIt = container.querySelector('.pin-it-button');
+      hide(pinIt ? pinIt.closest('.social-share-button') || pinIt : null);
+
+      if (fb && !container.querySelector('a[data-network="instagram"]')) {
+        var ig = fb.cloneNode(true);
+        ig.setAttribute('data-network', 'instagram');
+        ig.href = 'https://www.instagram.com/pupganics.arg/';
+        ig.title = 'Seguinos en Instagram';
+        ig.setAttribute('aria-label', 'Seguinos en Instagram');
+        var use = ig.querySelector('use');
+        if (use) use.setAttributeNS(XLINK_NS, 'xlink:href', '#instagram');
+        fb.insertAdjacentElement('afterend', ig);
+      }
+    }
+
+    setupSocialLinks();
   });
 })();
