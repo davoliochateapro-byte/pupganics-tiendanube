@@ -88,30 +88,50 @@
     // Oculta el bloque nativo redundante (precio/cuotas/descuento, el selector
     // "Cantidad" + paso a paso + botón "Agregar al carrito", el simulador de
     // envío y los sellos de confianza) ya que las tarjetas + el CTA propio los
-    // reemplazan. Se ocultan con display:none, nunca se quitan del DOM: el
-    // <select> y el botón real siguen ahí para que este mismo script los seguir
-    // usando (un elemento oculto responde igual a .value, "change" y .click()).
+    // reemplazan. El tema vuelve a mostrar el precio y el simulador de envío
+    // cada vez que cambia la variante (recalcula cuotas/costo de envío), así
+    // que un simple style.display='none' se pierde en el próximo click. Por
+    // eso se ocultan con una regla CSS !important (gana siempre sobre el
+    // display inline que el tema vuelva a poner) más un MutationObserver que
+    // reaplica la clase si el tema reconstruye esos nodos. Nunca se sacan del
+    // DOM: el <select> y el botón real siguen ahí, y un elemento oculto
+    // responde igual a .value, "change" y .click().
+    var HIDE_CLASS = 'pg-native-hide';
+    var style = document.createElement('style');
+    style.textContent =
+      '.js-price-container, .js-product-payments-container, #product-shipping-container, .' +
+      HIDE_CLASS +
+      ' { display: none !important; }';
+    document.head.appendChild(style);
+
     function hide(el) {
-      if (el) el.style.display = 'none';
+      if (el) el.classList.add(HIDE_CLASS);
     }
 
-    hide(document.querySelector('.js-price-container'));
-    hide(document.querySelector('.js-product-payments-container'));
+    function hideNativeExtras() {
+      var qtyRow = select.closest('.js-product-variants') || select.closest('.form-row');
+      hide(qtyRow);
 
-    var qtyRow = select.closest('.js-product-variants') || select.closest('.form-row');
-    hide(qtyRow);
+      var addToCartBtnEl = document.querySelector('.js-addtocart');
+      hide(addToCartBtnEl ? addToCartBtnEl.closest('.form-row') : null);
 
-    var addToCartBtnEl = document.querySelector('.js-addtocart');
-    hide(addToCartBtnEl ? addToCartBtnEl.closest('.form-row') : null);
-
-    hide(document.getElementById('product-shipping-container'));
-
-    var formRows = document.querySelectorAll('#product_form > div');
-    for (var m = 0; m < formRows.length; m++) {
-      var t = formRows[m].textContent;
-      if (/compra protegida/i.test(t) || /cambios y devoluciones/i.test(t)) {
-        hide(formRows[m]);
+      var formRows = document.querySelectorAll('#product_form > div');
+      for (var m = 0; m < formRows.length; m++) {
+        var t = formRows[m].textContent;
+        if (/compra protegida/i.test(t) || /cambios y devoluciones/i.test(t)) {
+          hide(formRows[m]);
+        }
       }
+    }
+
+    hideNativeExtras();
+
+    var form = document.getElementById('product_form');
+    if (form && window.MutationObserver) {
+      var observer = new MutationObserver(function () {
+        hideNativeExtras();
+      });
+      observer.observe(form, { childList: true, subtree: true });
     }
   });
 })();
